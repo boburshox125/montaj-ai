@@ -1,0 +1,30 @@
+name: EXE
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+      - run: npm test
+      - name: Yig'ish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            npx electron-builder --win --publish always -c.publish.provider=github -c.publish.owner="${GITHUB_REPOSITORY%/*}" -c.publish.repo="${GITHUB_REPOSITORY#*/}" -c.publish.releaseType=release
+          else
+            npx electron-builder --win --publish never
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MontajAI
+          path: dist/*.exe
