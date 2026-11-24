@@ -1,0 +1,33 @@
+{
+  "name": "montaj-ai",
+  "productName": "Montaj AI",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Premiere Pro uchun AI montaj agenti (Gemini + MCP)",
+  "author": "Montaj AI",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test --test-force-exit test/agent.test.js",
+    "test:ui": "electron test/ui.js",
+    "icon": "electron build/make-icon.js",
+    "dist": "electron-builder --win --publish never"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "electron-updater": "^6.8.11"
+  },
+  "devDependencies": {
+    "electron": "45.4.1",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "uz.montaj.ai",
+    "productName": "Montaj AI",
+    "files": ["src/**/*", "build/icon.png"],
+    "electronLanguages": ["en-US", "ru"],
+    "win": { "icon": "build/icon.png", "target": [{ "target": "nsis", "arch": ["x64"] }, { "target": "portable", "arch": ["x64"] }] },
+    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "artifactName": "MontajAI-Setup-${version}.${ext}" },
+    "portable": { "artifactName": "MontajAI-Portable-${version}.${ext}" }
+  }
+}
