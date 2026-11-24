@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="uz" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src blob:; connect-src blob:">
+<title>Montaj AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside id="left">
+  <div class="brand"><img src="logo.svg" alt=""><b>Montaj AI</b></div>
+  <button id="newChat" class="primary">+ Yangi suhbat</button>
+  <div id="chats"></div>
+  <button id="openSettings" class="ghost">Sozlamalar</button>
+</aside>
+<main>
+  <header>
+    <button id="toggleLeft" class="icon" title="Suhbatlar" aria-label="Suhbatlar">☰</button>
+    <button id="premiere" class="pill"><i></i><span>Tekshirilmoqda</span></button>
+    <span class="grow"></span>
+    <span id="tokens" class="muted" title="Shu suhbatda ishlatilgan tokenlar"></span>
+    <button id="exportChat" class="ghost sm">Saqlab olish</button>
+    <button id="pin" class="ghost sm" title="Oynani doim ustda ushlash">Ustda</button>
+    <button id="toggleRight" class="ghost sm">Timeline</button>
+  </header>
+  <div id="banner" hidden></div>
+  <section id="log" aria-live="polite"></section>
+  <footer>
+    <div id="approvals"></div>
+    <div id="chips"></div>
+    <div id="box">
+      <div id="files"></div>
+      <textarea id="input" rows="1" placeholder="Buyruq yozing. Masalan: pauzalarni kes va subtitr qo'sh"></textarea>
+      <div class="bar">
+        <button id="attach" class="icon" title="Fayl biriktirish" aria-label="Fayl biriktirish">＋</button>
+        <button id="mic" class="icon" title="Ovozli buyruq" aria-label="Ovozli buyruq"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        <select id="mode" title="Ish rejimi">
+          <option value="ask">So'rab ishlash</option>
+          <option value="auto">To'liq avtomatik</option>
+          <option value="plan">Faqat reja</option>
+        </select>
+        <button id="saveFav" class="ghost sm" title="Yozilgan buyruqni tayyor buyruqlarga qo'shish">Buyruqni saqlash</button>
+        <span class="grow"></span>
+        <button id="send" class="primary">Yuborish</button>
+      </div>
+    </div>
+  </footer>
+</main>
+<aside id="right">
+  <div class="row"><b>Timeline</b><span class="grow"></span><button id="refresh" class="ghost sm">Yangilash</button></div>
+  <div id="tl" class="muted">Premiere ulanganda shu yerda ko'rinadi.</div>
+  <img id="frame" alt="Joriy kadr" hidden>
+  <div class="grid2">
+    <button class="ghost" id="qFrame">Kadrni ko'rish</button>
+    <button class="ghost" id="qSave">Loyihani saqlash</button>
+    <button class="ghost" id="qBackup">Zaxira olish</button>
+    <button class="ghost" id="qBackups">Zaxiralar</button>
+  </div>
+</aside>
+
+<dialog id="settings">
+  <div class="row"><h2>Sozlamalar</h2><span class="grow"></span><button class="icon" data-close aria-label="Yopish">✕</button></div>
+  <div class="scroll">
+    <h3>Google Gemini API kalit</h3>
+    <p class="muted">Kalitni <a href="#" data-link="https://aistudio.google.com/apikey">Google AI Studio</a> saytidan bepul olasiz. Kalit kompyuteringizda shifrlab saqlanadi. Bir nechta kalit qo'shsangiz, limit tugaganda avtomatik almashadi.</p>
+    <div id="keys"></div>
+    <form id="keyForm" class="row"><input id="keyInput" type="password" autocomplete="off" placeholder="API kalitni shu yerga qo'ying"><button class="primary">Tekshirib qo'shish</button></form>
+    <h3>Model</h3>
+    <div class="row"><select id="model"></select><button id="loadModels" class="ghost">Ro'yxatni yangilash</button></div>
+    <label class="check"><input type="checkbox" id="fallback"> Limit tugasa zaxira modelga o'tish</label>
+    <h3>Ishlash</h3>
+    <label class="check"><input type="checkbox" id="autoBackup"> Har vazifada birinchi o'zgarishdan oldin zaxira olish</label>
+    <label class="check"><input type="checkbox" id="notify"> Vazifa tugaganda xabar berish</label>
+    <label class="check"><input type="checkbox" id="light"> Yorug' mavzu</label>
+    <h3>Doimiy ko'rsatmalar</h3>
+    <textarea id="rules" rows="4" placeholder="Masalan: subtitrlar doim katta harfda, Reels 9:16, musiqa -20 dB"></textarea>
+    <h3>MCP serverlar</h3>
+    <div id="servers"></div>
+    <div class="row"><button id="reconnect" class="ghost">Qayta ulash</button><button id="importClaude" class="ghost">Claude'dagi MCP'ni qo'shish</button></div>
+    <div id="claudeList"></div>
+    <details><summary>Qo'lda MCP qo'shish</summary>
+      <form id="mcpForm" class="stack"><input id="mcpName" placeholder="Nomi (premiere deb nomlansa asosiy server bo'ladi)"><input id="mcpCmd" placeholder="Dastur, masalan C:\...\node.exe"><textarea id="mcpArgs" rows="2" placeholder="Argumentlar, har biri alohida qatorda"></textarea><button class="ghost">Qo'shish</button></form>
+    </details>
+    <h3>Qo'shimcha kalitlar (ixtiyoriy)</h3>
+    <p class="muted">Bo'sh qoldirsangiz, Premiere panelidagi kalitlar ishlatiladi. Groq subtitr uchun, qolganlari stok video va GIF uchun.</p>
+    <form id="extraForm" class="stack"></form>
+    <p class="muted" id="ver"></p>
+  </div>
+</dialog>
+<div id="toast" role="status"></div>
+<div id="drop" hidden>Fayllarni shu yerga tashlang</div>
+<script src="md.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
